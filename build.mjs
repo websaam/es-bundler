@@ -69,12 +69,12 @@ async function esBundle(OUT_NAME, SRC_FILE) {
     "./dist/" + OUT_NAME + ".js",
     "utf8"
   );
-
   targetBundle = targetBundle.replace("var", "export const");
+  targetBundle = targetBundle.replace(`export default ${OUT_NAME};`, "");
 
   fs.writeFileSync(
     "./dist/" + OUT_NAME + ".js",
-    `//  ${indexFileContent}\n` + targetBundle
+    `// @ts-nocheck\n//  ${indexFileContent}\n` + targetBundle
   );
 }
 
