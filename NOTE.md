@@ -19,7 +19,7 @@ async function getNodeCrypto() {
     try{
         globalThis.crypto = require('crypto').webcrypto;
     }catch(e){
-        
+
     }
 }
 ```

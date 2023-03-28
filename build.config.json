@@ -1,0 +1,10 @@
+[
+  {
+    "src": "./src.imports/ipfs.js",
+    "globalName": "LitThirdPartyLibs"
+  },
+  {
+    "src": "./src.imports/cosmos.js",
+    "globalName": "CosmosBundledSDK"
+  }
+]
