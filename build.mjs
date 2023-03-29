@@ -1,4 +1,4 @@
-import { log, getBuildConfig } from "./utils.mjs";
+import { log, getBuildConfig, runCommand, deleteFile, renameFile } from "./utils.mjs";
 import esbuild from "esbuild";
 import fs from "fs";
 import { exit } from "process";
@@ -7,7 +7,9 @@ const buildConfig = await getBuildConfig();
 
 log.green("\nBuilding files: \n");
 await buildConfig.asyncForEach(async (config) => {
-  const { globalName, src } = config;
+  const { name, src } = config;
+
+  const globalName = `${name}BundledSDK`;
 
   try {
     await esBundle(globalName, src);
@@ -19,6 +21,13 @@ await buildConfig.asyncForEach(async (config) => {
 });
 
 async function esBundle(OUT_NAME, SRC_FILE) {
+  // extract the file name from the path
+  // e.g. ./src/index.js => index
+  const fileName = SRC_FILE.split("/").pop().split(".")[0];
+
+  // convert CosmosBundledSDK to cosmos-bundled-sdk
+  const DASHED_OUT_NAME = `${fileName}-bundled-sdk`;
+
   if (!OUT_NAME || !SRC_FILE) {
     log.red("Please provide the output name and source file");
     exit();
@@ -29,7 +38,7 @@ async function esBundle(OUT_NAME, SRC_FILE) {
     sourceRoot: "./",
     globalName: OUT_NAME,
     bundle: true,
-    outfile: "dist/" + OUT_NAME + ".js",
+    outfile: "dist/" + DASHED_OUT_NAME + ".ts",
     define: {
       zlib: "false",
       events: "false",
@@ -37,14 +46,14 @@ async function esBundle(OUT_NAME, SRC_FILE) {
   });
 
   fs.appendFileSync(
-    "dist/" + OUT_NAME + ".js",
+    "dist/" + DASHED_OUT_NAME + ".ts",
     "export default " + OUT_NAME + ";"
   );
 
   // let files = fs.readdirSync("dist");
   // files = files.map((file) => file.split(".")[0]);
 
-  const file = "./dist/" + OUT_NAME + ".js";
+  const file = "./dist/" + DASHED_OUT_NAME + ".ts";
   // files.forEach((file) => {
   // get the size of the file
   const stats = fs.statSync(file);
@@ -69,16 +78,39 @@ async function esBundle(OUT_NAME, SRC_FILE) {
 
   // write it to the top of the bundled file
   let targetBundle = await fs.promises.readFile(
-    "./dist/" + OUT_NAME + ".js",
+    "./dist/" + DASHED_OUT_NAME + ".ts",
     "utf8"
   );
   targetBundle = targetBundle.replace("var", "export const");
   targetBundle = targetBundle.replace(`export default ${OUT_NAME};`, "");
 
   fs.writeFileSync(
-    "./dist/" + OUT_NAME + ".js",
+    "./dist/" + DASHED_OUT_NAME + ".ts",
     `// @ts-nocheck\n//  ${indexFile}\n` + targetBundle
   );
 }
 
 console.log("");
+
+// post build
+
+log.green("\nGenerating types\n");
+
+await runCommand("tsc");
+
+const distFiles = fs.readdirSync("dist");
+
+await distFiles.asyncForEach(async (dFile) => {
+  // if the file ends with .js, delete it
+  if (dFile.endsWith(".js")) {
+    await deleteFile('dist/' + dFile);
+  }
+
+  // if the file ends with .d.ts, append the name with -bundled-sdk
+  if (dFile.endsWith(".d.ts")) {
+    dFile = dFile.split(".")[0];
+    
+    // rename the file
+    await renameFile(`dist/${dFile}.d.ts`, `dist/${dFile}-bundled-sdk.d.ts`)
+  }
+});

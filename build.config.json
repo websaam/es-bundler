@@ -1,10 +1,10 @@
 [
   {
-    "src": "./src.imports/ipfs.ts",
-    "globalName": "IPFSBundledSDK"
+    "name": "IPFS",
+    "src": "./src.imports/ipfs.ts"
   },
   {
-    "src": "./src.imports/cosmos.ts",
-    "globalName": "CosmosBundledSDK"
+    "name": "Cosmos",
+    "src": "./src.imports/cosmos.ts"
   }
 ]
