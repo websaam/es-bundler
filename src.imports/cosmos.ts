@@ -17,39 +17,23 @@ import { toBech32, fromHex } from "@cosmjs/encoding";
 
 import { makeSignBytes } from "@cosmjs/proto-signing";
 
-// @cosmjs/amino
-const amino = {
+export {
+  // @cosmjs/amino
   encodeSecp256k1Signature,
   rawSecp256k1PubkeyToRawAddress,
-};
-
-// @cosmjs/crypto
-const crypto = {
+  // @cosmjs/crypto
   Secp256k1,
   sha256,
   ExtendedSecp256k1Signature,
   toBech32,
   fromHex,
-};
-
-// @cosmjs/proto-signing
-const protoSigning = {
+  // @cosmjs/proto-signing
   makeSignBytes,
-};
-
-// @cosmjs/stargate
-const stargate = {
+  // @cosmjs/stargate
   assertIsDeliverTxSuccess,
   SigningStargateClient,
   StdFee,
   calculateFee,
   GasPrice,
-  coins
-}
-
-export {
-  amino,
-  crypto,
-  protoSigning,
-  stargate
+  coins,
 };

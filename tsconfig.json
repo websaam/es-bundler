@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "dist/types",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src.imports/**/*"],
+  "exclude": ["node_modules"]
+}

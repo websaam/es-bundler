@@ -60,9 +60,12 @@ async function esBundle(OUT_NAME, SRC_FILE) {
   // get the content of the index.js file between export { and };
   let indexFile = await fs.promises.readFile(SRC_FILE, "utf8");
 
-  let indexFileContent = indexFile.split("export {")[1].split("}")[0].trim();
+  // for each line, add // in front of it
+  indexFile = indexFile.replaceAll("\n", "\n//");
 
-  indexFileContent = indexFileContent.replaceAll("\n", "\n//");
+  // let indexFileContent = indexFile.split("export {")[1].split("}")[0].trim();
+
+  // indexFileContent = indexFileContent.replaceAll("\n", "\n//");
 
   // write it to the top of the bundled file
   let targetBundle = await fs.promises.readFile(
@@ -74,7 +77,7 @@ async function esBundle(OUT_NAME, SRC_FILE) {
 
   fs.writeFileSync(
     "./dist/" + OUT_NAME + ".js",
-    `// @ts-nocheck\n//  ${indexFileContent}\n` + targetBundle
+    `// @ts-nocheck\n//  ${indexFile}\n` + targetBundle
   );
 }
 
