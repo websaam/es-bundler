@@ -1,4 +1,10 @@
-import { log, getBuildConfig, runCommand, deleteFile, renameFile } from "./utils.mjs";
+import {
+  log,
+  getBuildConfig,
+  runCommand,
+  deleteFile,
+  renameFile,
+} from "./utils.mjs";
 import esbuild from "esbuild";
 import fs from "fs";
 import { exit } from "process";
@@ -74,6 +80,10 @@ async function esBundle(OUT_NAME, SRC_FILE) {
 
   // let indexFileContent = indexFile.split("export {")[1].split("}")[0].trim();
 
+  // indexFile.split('\n').forEach((line) => {
+  //   console.log(line)
+  // });
+
   // indexFileContent = indexFileContent.replaceAll("\n", "\n//");
 
   // write it to the top of the bundled file
@@ -94,23 +104,23 @@ console.log("");
 
 // post build
 
-log.green("\nGenerating types\n");
+// log.green("\nGenerating types\n");
 
-await runCommand("tsc");
+// await runCommand("tsc");
 
-const distFiles = fs.readdirSync("dist");
+// const distFiles = fs.readdirSync("dist");
 
-await distFiles.asyncForEach(async (dFile) => {
-  // if the file ends with .js, delete it
-  if (dFile.endsWith(".js")) {
-    await deleteFile('dist/' + dFile);
-  }
+// await distFiles.asyncForEach(async (dFile) => {
+//   // if the file ends with .js, delete it
+//   if (dFile.endsWith(".js")) {
+//     await deleteFile('dist/' + dFile);
+//   }
 
-  // if the file ends with .d.ts, append the name with -bundled-sdk
-  if (dFile.endsWith(".d.ts")) {
-    dFile = dFile.split(".")[0];
-    
-    // rename the file
-    await renameFile(`dist/${dFile}.d.ts`, `dist/${dFile}-bundled-sdk.d.ts`)
-  }
-});
+//   // if the file ends with .d.ts, append the name with -bundled-sdk
+//   if (dFile.endsWith(".d.ts")) {
+//     dFile = dFile.split(".")[0];
+
+//     // rename the file
+//     await renameFile(`dist/${dFile}.d.ts`, `dist/${dFile}-bundled-sdk.d.ts`)
+//   }
+// });
